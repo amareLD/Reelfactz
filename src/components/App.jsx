@@ -25,7 +25,6 @@ function App() {
           <Route path="/profile/:id" element={<Profile />} />
         </Routes>
       </main>
-      <h1>Hello, World - Filmpire</h1>
     </div>
   );
 }
