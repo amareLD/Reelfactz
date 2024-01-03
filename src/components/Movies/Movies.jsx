@@ -8,13 +8,39 @@ import {
 import { useSelector } from 'react-redux';
 
 import { useGetMoviesQuery } from '../../services/TMDB';
+import MovieList from '../MovieList/MovieList';
 
 function Movies() {
-  const { data } = useGetMoviesQuery();
+  const { data, error, isFetching } = useGetMoviesQuery();
 
-  console.log(data);
+  if (isFetching) {
+    return (
+      <Box display="flex" justifyContent="center">
+        <CircularProgress size="4rem" />
+      </Box>
+    );
+  }
 
-  return <div>Moviess</div>;
+  if (!data.results.length) {
+    return (
+      <Box display="flex" alignItems="center" mt="20px">
+        <Typography variant="h4">
+          No Movies that match that name.
+          <br />
+          Please Search for something else.
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (error) return 'An error has occured.';
+  // console.log(data);
+
+  return (
+    <div>
+      <MovieList movies={data} />
+    </div>
+  );
 }
 
 export default Movies;
