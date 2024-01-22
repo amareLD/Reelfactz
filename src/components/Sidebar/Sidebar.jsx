@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useGetGenresQuery } from '../../services/TMDB';
 import useStyles from './styles';
 import genreIcons from '../../assets/genres';
-import { selectGenreOrCategory } from '../../features/currentGenreOrCategory';
+import { selectGenreOrCategory, genreOrCategory } from '../../features/currentGenreOrCategory';
 
 const categories = [
   { label: 'Popular', value: 'popular' },
@@ -29,12 +29,13 @@ const blueLogo = 'https://fontmeme.com/permalink/210930/8531c658a743debe1e1aa1a2
 
 // { setMobileOpen }
 function Sidebar({ setMobileOpen }) {
+  const { genreIdOrCategoryName } = useSelector((state) => state.currentGenreOrCategory);
   const theme = useTheme();
   const classes = useStyles();
   const { data, isFetching } = useGetGenresQuery();
   const dispatch = useDispatch();
 
-  console.log(data);
+  console.log(genreIdOrCategoryName);
 
   return (
     <>
@@ -65,6 +66,7 @@ function Sidebar({ setMobileOpen }) {
       </List>
       <Divider />
       <List>
+
         <ListSubheader>Genres</ListSubheader>
 
         {isFetching ? (
