@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   IconButton,
@@ -16,18 +16,61 @@ import {
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { setUser, userSelector } from '../../features/auth';
 import useStyles from './styles';
 import Sidebar from '../Sidebar/Sidebar';
 import Search from '../Search/Search';
+import { fetchToken, createSessionId, moviesApi } from '../../utils';
 
 export default function NavBar() {
+  const { isAuthenticated, user } = useSelector(userSelector);
   const [mobileOpen, setMobileOpen] = useState(false);
   const classes = useStyles();
   const isMobile = useMediaQuery('(max-width:600px)'); // Fix typo
   const theme = useTheme();
+  const dispatch = useDispatch();
 
-  const isAuthenticated = true;
+  console.log(user);
+
+  const token = localStorage.getItem('request_token');
+  const sessionIdFromLocalStorage = localStorage.getItem('session_id');
+
+  useEffect(() => {
+    const logInUser = async () => {
+      if (token) {
+        if (sessionIdFromLocalStorage) {
+          const { data: userData } = await moviesApi.get(
+            `/account?session_id=${sessionIdFromLocalStorage}`,
+          );
+        } else {
+          const sessionId = await createSessionId();
+
+          const { data: userData } = await moviesApi.get(
+            `/account?session_id=${sessionId}`,
+          );
+          dispatch(setUser(userData));
+        }
+      }
+    };
+  }, [token]);
+
+  // useEffect(() => {
+  //   const logInUser = async () => {
+  //     if (token) {
+  //       try {
+  //         const sessionId = localStorage.getItem('session_id') ? localStorage.getItem('session_id') : await createSessionId();
+
+  //         const { data: userData } = await moviesApi.get(`/account?session_id=${sessionId}`);
+  //         dispatch(setUser(userData));
+  //       } catch (error) {
+  //         console.log('Your user data could not be fetched.');
+  //       }
+  //     }
+  //   };
+  //   logInUser();
+  // }, [token]);
 
   return (
     <>
@@ -36,7 +79,7 @@ export default function NavBar() {
           {isMobile && (
             <IconButton
               color="inherit"
-              edge="start"
+              edge=" start"
               style={{ outline: 'none' }}
               onClick={() => setMobileOpen((prevMobileOpen) => !prevMobileOpen)}
               className={classes.menuButton}
@@ -50,7 +93,7 @@ export default function NavBar() {
           {!isMobile && <Search />}
           <div>
             {!isAuthenticated ? (
-              <Button color="inherit" onClick={() => {}}>
+              <Button color="inherit" onClick={fetchToken}>
                 Login &nbsp;
                 <AccountCircle />
               </Button>
