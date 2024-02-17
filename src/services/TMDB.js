@@ -21,13 +21,17 @@ export const tmdbApi = createApi({
         }
 
         //* Get Movies by Category
-        if (genreIdOrCategoryName && typeof genreIdOrCategoryName === 'string') {
+        if (
+          genreIdOrCategoryName && typeof genreIdOrCategoryName === 'string'
+        ) {
           return `movie/${genreIdOrCategoryName}?page=${page}&api_key=${tmdbApiKey}`;
         }
 
         // console.log(genreIdOrCategoryName);
         //* Get Movies by Genre
-        if (genreIdOrCategoryName && typeof genreIdOrCategoryName === 'number') {
+        if (
+          genreIdOrCategoryName && typeof genreIdOrCategoryName === 'number'
+        ) {
           return `discover/movie?with_genres=${genreIdOrCategoryName}&page=${page}&api_key=${tmdbApiKey}`;
         }
 
@@ -37,7 +41,11 @@ export const tmdbApi = createApi({
         // Replace with your actual endpoint
       },
     }),
+    //* Get One Movie
+    getMovie: builder.query({
+      query: (id) => `movie/${id}?append_to_response=videos,credits&api_key=${tmdbApiKey}`,
+    }),
   }),
 });
 
-export const { useGetMoviesQuery, useGetGenresQuery } = tmdbApi;
+export const { useGetMoviesQuery, useGetGenresQuery, useGetMovieQuery } = tmdbApi;
